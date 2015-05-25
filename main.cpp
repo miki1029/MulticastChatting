@@ -1,34 +1,44 @@
 #include <iostream>
-#include "MessageQueueToMutlcast.h"
+#include "MessageQueueToMulticast.h"
 #include "InputToMessageQueue.h"
 #include "MessageQueueToOutput.h"
 #include "MulticastToMessageQueue.h"
 
-using namespace std;
+bool runState = true;
+
+void handler(int signum) {
+    runState = false;
+}
 
 int main(int argc, char** argv) {
-    cout << "hi" << endl;
+    if(argc != 4) {
+        std::cout << "Usage : " << argv[0] << " <GroupIP> <PORT> <UserName>\n" << std::endl;
+        return 1;
+    }
 
     InputToMessageQueue input;
-//    MessageQueueToMutlcast toMulticast(argv[1], argv[2]);
-//    MulticastToMessageQueue fromMulticast(argv[1], argv[2]);
-//    MessageQueueToMutlcast toMulticast("224.1.1.2", "20000");
-    MulticastToMessageQueue fromMulticast("224.1.1.2", "20000");
+    MessageQueueToMulticast toMulticast(argv[1], argv[2], argv[3]);
+    MulticastToMessageQueue fromMulticast(argv[1], argv[2]);
+//    MessageQueueToMulticast toMulticast("224.1.1.2", "20000", argv[1]);
+//    MulticastToMessageQueue fromMulticast("224.1.1.2", "20000");
     MessageQueueToOutput output;
 
     input.StartThread();
-//    toMulticast.StartThread();
+    toMulticast.StartThread();
     fromMulticast.StartThread();
     output.StartThread();
 
-    sleep(100);
+    while(runState) {
+        sleep(1);
+        signal(SIGINT, handler);
+    }
 
     input.StopThread();
-//    toMulticast.StopThread();
+    toMulticast.StopThread();
     fromMulticast.StopThread();
     output.StopThread();
 
-    cout << "bye" << endl;
+    std::cout << "Exit Chatting Program !" << std::endl;
 
     return 0;
 }

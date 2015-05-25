@@ -7,15 +7,12 @@
 
 #include "header.h"
 
-class MessageQueueToMutlcast {
+class MessageQueueToMulticast {
 private:
     std::thread th;
+    char userInfo[USR_SIZE];
 
     // Message Queue
-    struct my_msgbuf {
-        long mtype;
-        char mtext[200];
-    };
     struct my_msgbuf buf;
     int msqid;
     key_t key;
@@ -24,13 +21,15 @@ private:
     int send_sock;
     struct sockaddr_in mul_adr;
     int time_live = TTL;
+    char multicastBuf[USR_SIZE + BUF_SIZE];
 
 public:
-    MessageQueueToMutlcast(const char *ip, const char *port);
-    ~MessageQueueToMutlcast();
+    MessageQueueToMulticast(const char *ip, const char *port, const char *user);
+    ~MessageQueueToMulticast();
 
     void StartThread();
     void StopThread();
+    void GetIPAddress();
 };
 
 

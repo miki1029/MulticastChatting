@@ -12,10 +12,6 @@ private:
     std::thread th;
 
     // Message Queue
-    struct my_msgbuf {
-        long mtype;
-        char mtext[BUF_SIZE];
-    };
     struct my_msgbuf buf;
     int msqid;
     key_t key;

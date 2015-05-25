@@ -2,9 +2,9 @@
 // Created by 김민우 on 15. 5. 25..
 //
 
-#include "MessageQueueToMutlcast.h"
+#include "MessageQueueToMulticast.h"
 
-MessageQueueToMutlcast::MessageQueueToMutlcast(const char *ip, const char *port) {
+MessageQueueToMulticast::MessageQueueToMulticast(const char *ip, const char *port, const char *user) {
     // init Message Queue
     // key : ipc key from "chatkey" file
     if((key = ftok("chatkey", 'B')) == -1) {
@@ -29,13 +29,21 @@ MessageQueueToMutlcast::MessageQueueToMutlcast(const char *ip, const char *port)
     mul_adr.sin_addr.s_addr = inet_addr(ip);
     mul_adr.sin_port = htons(atoi(port));
     setsockopt(send_sock, IPPROTO_IP, IP_MULTICAST_TTL, (void*)&time_live, sizeof(time_live));
+
+    // init userInfo
+    strcpy(userInfo, user);
+//    sprintf(userInfo, "%s", user);
+//    struct sockaddr_in localAddr;
+//    localAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+//    char* userIP = inet_ntoa(localAddr.sin_addr);
+//    std::cout << user << "(" << userIP << ") : " << std::endl;
 }
 
-MessageQueueToMutlcast::~MessageQueueToMutlcast() {
+MessageQueueToMulticast::~MessageQueueToMulticast() {
     close(send_sock);
 }
 
-void MessageQueueToMutlcast::StartThread() {
+void MessageQueueToMulticast::StartThread() {
     // thread create
     th = std::thread([=]() {
         while(true) {
@@ -44,14 +52,15 @@ void MessageQueueToMutlcast::StartThread() {
                 perror("msgrcv");
                 exit(1);
             }
+            // add User Info
+            sprintf(multicastBuf, "%s : %s", userInfo, buf.mtext);
             // send Multicast
-            std::cout << "MQ(1)->Multicast : " << buf.mtext << std::endl;
-            sendto(send_sock, buf.mtext, strlen(buf.mtext), 0, (struct sockaddr*)&mul_adr, sizeof(mul_adr));
-            std::cout << std::endl << "MQ(1)->Multicast : " << buf.mtext << std::endl;
+            sendto(send_sock, multicastBuf, strlen(multicastBuf), 0, (struct sockaddr*)&mul_adr, sizeof(mul_adr));
+            // std::cout << std::endl << "MQ(1)->Multicast : " << multicastBuf << std::endl;
         }
     });
 }
 
-void MessageQueueToMutlcast::StopThread() {
+void MessageQueueToMulticast::StopThread() {
     th.detach();
 }
