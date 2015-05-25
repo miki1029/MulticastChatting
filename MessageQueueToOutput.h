@@ -5,13 +5,7 @@
 #ifndef MULTICASTCHATTING_MESSAGEQUEUETOOUTPUT_H
 #define MULTICASTCHATTING_MESSAGEQUEUETOOUTPUT_H
 
-#include <iostream>
-#include <thread>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-
-#define BUF_SIZE 200
+#include "header.h"
 
 class MessageQueueToOutput {
 private:

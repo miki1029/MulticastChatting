@@ -45,8 +45,9 @@ void MessageQueueToMutlcast::StartThread() {
                 exit(1);
             }
             // send Multicast
+            std::cout << "MQ(1)->Multicast : " << buf.mtext << std::endl;
             sendto(send_sock, buf.mtext, strlen(buf.mtext), 0, (struct sockaddr*)&mul_adr, sizeof(mul_adr));
-            std::cout << std::endl << "MQ->Multicast : " << buf.mtext << std::endl;
+            std::cout << std::endl << "MQ(1)->Multicast : " << buf.mtext << std::endl;
         }
     });
 }

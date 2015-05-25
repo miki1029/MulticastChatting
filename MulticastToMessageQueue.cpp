@@ -7,7 +7,7 @@
 MulticastToMessageQueue::MulticastToMessageQueue(const char *ip, const char *port) {
     // init MessageQueue
     // key : ipc key from "chatkey" file
-    if((key = ftok("chatkey", 'B')) == -1) {
+    if((key = ftok("chatkey", 'C')) == -1) {
         perror("ftok");
         exit(1);
     }
@@ -27,10 +27,12 @@ MulticastToMessageQueue::MulticastToMessageQueue(const char *ip, const char *por
     adr.sin_addr.s_addr=htonl(INADDR_ANY);
     adr.sin_port=htons(atoi(port));
 
+    std::cout << "bind start" << std::endl;
     if(bind(recv_sock, (struct sockaddr*) &adr, sizeof(adr)) == -1) {
         perror("bind");
         exit(1);
     }
+    std::cout << "bind end" << std::endl;
 
     join_adr.imr_multiaddr.s_addr=inet_addr(ip);
     join_adr.imr_interface.s_addr=htonl(INADDR_ANY);
@@ -62,6 +64,7 @@ void MulticastToMessageQueue::StartThread() {
             // ditch newline at end, if it exists
             if(buf.mtext[str_len-1] == '\n') buf.mtext[str_len-1] = '\0';
 
+            std::cout << "Multicast->MQ(2) : " << buf.mtext << std::endl;
             // write message to Message Queue (+1 for '\0')
             if(msgsnd(msqid, &buf, str_len+1, 0) == -1)
                 perror("msgsnd");

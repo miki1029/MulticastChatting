@@ -39,6 +39,7 @@ void InputToMessageQueue::StartThread() {
             // ditch newline at end, if it exists
             if(buf.mtext[len-1] == '\n') buf.mtext[len-1] = '\0';
 
+            std::cout << "Input->MQ(1) : " << buf.mtext << std::endl;
             // write message to Message Queue (+1 for '\0')
             if(msgsnd(msqid, &buf, len+1, 0) == -1)
                 perror("msgsnd");

@@ -5,16 +5,7 @@
 #ifndef MULTICASTCHATTING_MESSAGEQUEUETOMULTICAST_H
 #define MULTICASTCHATTING_MESSAGEQUEUETOMULTICAST_H
 
-#include <iostream>
-#include <cstdlib>
-#include <thread>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-
-#define TTL 64
+#include "header.h"
 
 class MessageQueueToMutlcast {
 private:

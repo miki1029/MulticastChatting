@@ -5,13 +5,7 @@
 #ifndef MULTICASTCHATTING_INPUTTOMESSAGEQUEUE_H
 #define MULTICASTCHATTING_INPUTTOMESSAGEQUEUE_H
 
-#include <iostream>
-#include <thread>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-
-#define BUF_SIZE 200
+#include "header.h"
 
 class InputToMessageQueue {
 private:

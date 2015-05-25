@@ -5,15 +5,7 @@
 #ifndef MULTICASTCHATTING_MULTICASTTOMESSAGEQUEUE_H
 #define MULTICASTCHATTING_MULTICASTTOMESSAGEQUEUE_H
 
-#include <cstdlib>
-#include <thread>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-
-#define BUF_SIZE 200
+#include "header.h"
 
 class MulticastToMessageQueue {
 private:

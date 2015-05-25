@@ -6,7 +6,7 @@
 
 MessageQueueToOutput::MessageQueueToOutput() {
     // key : ipc key from "chatkey" file
-    if((key = ftok("chatkey", 'B')) == -1) {
+    if((key = ftok("chatkey", 'C')) == -1) {
         perror("ftok");
         exit(1);
     }
@@ -32,7 +32,7 @@ void MessageQueueToOutput::StartThread() {
                 perror("msgrcv");
                 exit(1);
             }
-            std::cout << std::endl << "read message : " << buf.mtext << std::endl;
+            std::cout << std::endl << "MQ(2)->Output : " << buf.mtext << std::endl;
         }
     });
 }
