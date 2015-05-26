@@ -33,7 +33,7 @@ void MessageQueueToOutput::StartThread() {
                 exit(1);
             }
             //std::cout << std::endl << "MQ(2)->Output : " << buf.mtext << std::endl;
-            std::cout << ">" << buf.mtext << std::endl << std::endl;
+            std::cout << "> " << buf.mtext << std::endl;
         }
     });
 }

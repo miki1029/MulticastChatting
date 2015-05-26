@@ -4,18 +4,18 @@
 
 #include "FileTransferClient.h"
 
-FileTransferClient::FileTransferClient(const char *ip, const char *port) {
-    // Client setup
-    sd=socket(PF_INET, SOCK_STREAM, 0);
-    if(sd == -1) {
-        perror("socket");
-        exit(1);
-    }
-    memset(&serv_addr, 0, sizeof(serv_addr));
-    serv_addr.sin_family=AF_INET;
-    serv_addr.sin_addr.s_addr=inet_addr(ip);
-    serv_addr.sin_port=htons(atoi(port));
-}
+//FileTransferClient::FileTransferClient(const char *ip, const char *port) {
+//    // Client setup
+//    sd=socket(PF_INET, SOCK_STREAM, 0);
+//    if(sd == -1) {
+//        perror("socket");
+//        exit(1);
+//    }
+//    memset(&serv_addr, 0, sizeof(serv_addr));
+//    serv_addr.sin_family=AF_INET;
+//    serv_addr.sin_addr.s_addr=inet_addr(ip);
+//    serv_addr.sin_port=htons(atoi(port));
+//}
 
 FileTransferClient::FileTransferClient(char *line) {
     char *cptr = line;
@@ -30,15 +30,8 @@ FileTransferClient::FileTransferClient(char *line) {
     strcpy(port, cptr);
 
     // Client setup
-    sd=socket(PF_INET, SOCK_STREAM, 0);
-    if(sd == -1) {
-        perror("socket");
-        exit(1);
-    }
-    memset(&serv_addr, 0, sizeof(serv_addr));
-    serv_addr.sin_family=AF_INET;
-    serv_addr.sin_addr.s_addr=inet_addr(ip);
-    serv_addr.sin_port=htons(atoi(port));
+
+    std::cout << "[" << ip << "," << port << "]" << std::endl;
 }
 
 FileTransferClient::~FileTransferClient() {
@@ -47,17 +40,30 @@ FileTransferClient::~FileTransferClient() {
 
 void FileTransferClient::StartThread() {
     th = std::thread([=]() {
+        sd=socket(PF_INET, SOCK_STREAM, 0);
+        if(sd == -1) {
+            perror("socket");
+            exit(1);
+        }
+        memset(&serv_addr, 0, sizeof(serv_addr));
+        serv_addr.sin_family=AF_INET;
+        serv_addr.sin_addr.s_addr=inet_addr(ip);
+        serv_addr.sin_port=htons(atoi(port));
+
         if( connect(sd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) == -1 ){
+            std::cout << sd << std::endl;
             perror("connect");
             exit(1);
         }
 
         // input filepath
         read(sd, destpath, sizeof(destpath));
+        std::cout << "receive destpath : [" << destpath << "]" << std::endl;
 
         // file transfer
         PasteProcess(destpath, sd);
     });
+    StopThread();
 }
 
 void FileTransferClient::StopThread() {
@@ -81,6 +87,7 @@ int FileTransferClient::PasteProcess(char *outfile, int fd1) {
 
     // receive mode
     read(fd1, &statbuf, sizeof(statbuf));
+    std::cout << "receive mode : [" << statbuf.st_mode << "]" << std::endl;
     // inmode = statbuf.st_mode;
     if (fchmod(fd2, statbuf.st_mode) < 0) {
         fprintf(stderr, "%s: fchmod fail: %s\n", outfile, strerror(errno));

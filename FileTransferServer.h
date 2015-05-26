@@ -17,16 +17,15 @@ private:
     char others[2 * BUF_SIZE]; // for strtok
 
     // tcp server
-    int serverSock;
-    int clientSock;
+    int serv_sd;
+    int clnt_sd;
     struct sockaddr_in serv_addr;
     struct sockaddr_in clnt_addr;
-    char filepath[BUF_SIZE];
-    int clnt_addr_size;
+    socklen_t clnt_addr_size;
 
 public:
-    FileTransferServer(const char* username, const char* srcpath,
-                       const char* destpath, const char* port);
+//    FileTransferServer(const char* username, const char* srcpath,
+//                       const char* destpath, const char* port);
     FileTransferServer(char* line);
     ~FileTransferServer();
 

@@ -21,7 +21,7 @@ private:
     char filename[BUF_SIZE];
 
 public:
-    FileTransferClient(const char* ip, const char* port);
+//    FileTransferClient(const char* ip, const char* port);
     FileTransferClient(char *line);
     ~FileTransferClient();
 

@@ -41,18 +41,20 @@ void InputToMessageQueue::StartThread() {
 
             // ditch newline at end, if it exists
             if(buf.mtext[len-1] == '\n') buf.mtext[len-1] = '\0';
-/*
+
             // if input 'ftsnd <username> <srcpath> <destpath> <PORT>' then file transfer send
             if(strncmp(buf.mtext, "ftsnd ", 6) == 0) {
-                FileTransferServer fts(buf.mtext);
-                fts.StartThread();
+                fts = new FileTransferServer(buf.mtext);
+                fts->StartThread();
+                continue;
             }
             // if input 'ftrcv <ServerIP> <PORT>' then file transfer receive
             else if(strncmp(buf.mtext, "ftrcv ", 6) == 0) {
-                FileTransferClient ftc(buf.mtext);
-                ftc.StartThread();
+                ftc = new FileTransferClient(buf.mtext);
+                ftc->StartThread();
+                continue;
             }
-*/
+
             // std::cout << "Input->MQ(1) : " << buf.mtext << std::endl;
             // write message to Message Queue (+1 for '\0')
             if(msgsnd(msqid, &buf, len+1, 0) == -1)

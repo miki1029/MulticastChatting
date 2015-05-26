@@ -6,10 +6,14 @@
 #define MULTICASTCHATTING_INPUTTOMESSAGEQUEUE_H
 
 #include "header.h"
+#include "FileTransferServer.h"
+#include "FileTransferClient.h"
 
 class InputToMessageQueue {
 private:
     std::thread th;
+    FileTransferServer *fts;
+    FileTransferClient *ftc;
 
     // message queue
     struct my_msgbuf buf;
