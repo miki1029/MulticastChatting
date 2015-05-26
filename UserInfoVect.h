@@ -17,6 +17,7 @@ public:
     void AddUser(UserInfo ui);
     void AddUserIPByName(const char *username, const char *ip);
     const char* FindIPByName(const char* username);
+    void PrintUsers();
 };
 
 extern UserInfoVect userInfoVect;

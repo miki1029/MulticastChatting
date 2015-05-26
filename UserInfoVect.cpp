@@ -30,3 +30,9 @@ const char *UserInfoVect::FindIPByName(const char *username) {
     }
     return "0.0.0.0";
 }
+
+void UserInfoVect::PrintUsers() {
+    for(UserInfo ui : userVect) {
+        std::cout << ui.GetUsername() << ":" << ui.GetIP() << std::endl;
+    }
+}

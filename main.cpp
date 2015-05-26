@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
         std::cout << "Usage : " << argv[0] << " <GroupIP> <PORT> <User Name>\n" << std::endl;
         return 1;
     }
-    if(strchr(argv[3], '\t') != NULL) {
+    if(strchr(argv[3], ':') != NULL) {
         std::cout << "Don't use ':' in user name" << std::endl;
         return 1;
     }
@@ -38,6 +38,7 @@ int main(int argc, char** argv) {
         sleep(1);
         signal(SIGINT, handler);
     }
+//    userInfoVect.PrintUsers();
 
     input.StopThread();
     toMulticast.StopThread();

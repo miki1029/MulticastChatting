@@ -25,6 +25,7 @@
 #define BUF_SIZE 200
 #define USR_SIZE 80
 #define IP_SIZE 20
+#define PORT_SIZE 5
 #define TTL 64
 
 struct my_msgbuf {
