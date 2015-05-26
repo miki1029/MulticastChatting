@@ -16,7 +16,7 @@ private:
     char port[PORT_SIZE];
     char others[2 * BUF_SIZE]; // for strtok
 
-    // tcp server
+    // tcp
     int serv_sd;
     int clnt_sd;
     struct sockaddr_in serv_addr;
@@ -24,8 +24,6 @@ private:
     socklen_t clnt_addr_size;
 
 public:
-//    FileTransferServer(const char* username, const char* srcpath,
-//                       const char* destpath, const char* port);
     FileTransferServer(char* line);
     ~FileTransferServer();
 

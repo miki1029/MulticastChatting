@@ -3,19 +3,7 @@
 //
 
 #include "FileTransferClient.h"
-
-//FileTransferClient::FileTransferClient(const char *ip, const char *port) {
-//    // Client setup
-//    sd=socket(PF_INET, SOCK_STREAM, 0);
-//    if(sd == -1) {
-//        perror("socket");
-//        exit(1);
-//    }
-//    memset(&serv_addr, 0, sizeof(serv_addr));
-//    serv_addr.sin_family=AF_INET;
-//    serv_addr.sin_addr.s_addr=inet_addr(ip);
-//    serv_addr.sin_port=htons(atoi(port));
-//}
+#include "UserInfoVect.h"
 
 FileTransferClient::FileTransferClient(char *line) {
     char *cptr = line;
@@ -25,13 +13,12 @@ FileTransferClient::FileTransferClient(char *line) {
     strcpy(others, cptr);
 
     cptr = strtok(others, " ");
-    strcpy(ip, cptr);
-    cptr += (int)strlen(ip) + 1;
+    strcpy(username, cptr);
+    cptr += (int)strlen(username) + 1;
     strcpy(port, cptr);
 
-    // Client setup
-
-    std::cout << "[" << ip << "," << port << "]" << std::endl;
+    const char *findIP = userInfoVect.FindIPByName(username);
+    strcpy(ip, findIP);
 }
 
 FileTransferClient::~FileTransferClient() {
@@ -49,19 +36,18 @@ void FileTransferClient::StartThread() {
         serv_addr.sin_family=AF_INET;
         serv_addr.sin_addr.s_addr=inet_addr(ip);
         serv_addr.sin_port=htons(atoi(port));
-
         if( connect(sd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) == -1 ){
-            std::cout << sd << std::endl;
             perror("connect");
             exit(1);
         }
 
         // input filepath
         read(sd, destpath, sizeof(destpath));
-        std::cout << "receive destpath : [" << destpath << "]" << std::endl;
+        write(sd, "ok", 2);
 
         // file transfer
         PasteProcess(destpath, sd);
+        std::cout << "file transfer complete !" << std::endl;
     });
     StopThread();
 }
@@ -74,7 +60,7 @@ void FileTransferClient::StopThread() {
 int FileTransferClient::PasteProcess(char *outfile, int fd1) {
     int fd2;
     ssize_t rcount, wcount;
-    char buffer[BUFSIZ];
+    char buffer[BUF_SIZE];
     int errors = 0;
     struct stat statbuf;
     mode_t inmode = 0644;
@@ -85,10 +71,8 @@ int FileTransferClient::PasteProcess(char *outfile, int fd1) {
         return 1;
     }
 
-    // receive mode
-    read(fd1, &statbuf, sizeof(statbuf));
-    std::cout << "receive mode : [" << statbuf.st_mode << "]" << std::endl;
-    // inmode = statbuf.st_mode;
+    // set mode
+    statbuf.st_mode = inmode;
     if (fchmod(fd2, statbuf.st_mode) < 0) {
         fprintf(stderr, "%s: fchmod fail: %s\n", outfile, strerror(errno));
         errors++;
@@ -102,6 +86,7 @@ int FileTransferClient::PasteProcess(char *outfile, int fd1) {
             errors++;
             break;
         }
+        if (rcount < BUF_SIZE || rcount == 0) break;
     }
     if (rcount < 0) {
         fprintf(stderr, "%d: read error: %s\n", fd1, strerror(errno));

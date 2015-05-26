@@ -10,18 +10,17 @@
 class FileTransferClient {
 private:
     std::thread th;
+    char username[USR_SIZE];
     char ip[IP_SIZE];
     char port[PORT_SIZE];
     char destpath[BUF_SIZE];
     char others[BUF_SIZE]; // for strtok
 
-    // tcp server
+    // tcp
     int sd;
     struct sockaddr_in serv_addr;
-    char filename[BUF_SIZE];
 
 public:
-//    FileTransferClient(const char* ip, const char* port);
     FileTransferClient(char *line);
     ~FileTransferClient();
 
