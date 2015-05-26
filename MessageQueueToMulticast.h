@@ -10,7 +10,7 @@
 class MessageQueueToMulticast {
 private:
     std::thread th;
-    char userInfo[USR_SIZE];
+    char username[USR_SIZE];
 
     // Message Queue
     struct my_msgbuf buf;
@@ -21,7 +21,6 @@ private:
     int send_sock;
     struct sockaddr_in mul_adr;
     int time_live = TTL;
-    char multicastBuf[USR_SIZE + BUF_SIZE];
 
 public:
     MessageQueueToMulticast(const char *ip, const char *port, const char *user);

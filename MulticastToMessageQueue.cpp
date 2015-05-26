@@ -3,6 +3,8 @@
 //
 
 #include "MulticastToMessageQueue.h"
+#include "MessageInfo.h"
+#include "UserInfoVect.h"
 
 MulticastToMessageQueue::MulticastToMessageQueue(const char *ip, const char *port) {
     // init MessageQueue
@@ -56,6 +58,7 @@ void MulticastToMessageQueue::StartThread() {
             struct sockaddr_in src_addr;
             socklen_t src_addr_len = sizeof(src_addr);
             char* src_ip;
+
             // read message from Multicast
             str_len = recvfrom(recv_sock, multicastBuf, USR_SIZE+BUF_SIZE-1, 0, (struct sockaddr*)&src_addr, &src_addr_len);
             if(str_len<0)
@@ -63,6 +66,17 @@ void MulticastToMessageQueue::StartThread() {
             multicastBuf[str_len]='\0';
             src_ip = inet_ntoa(src_addr.sin_addr);
             sprintf(buf.mtext, "(%s) %s", src_ip, multicastBuf);
+
+            // build IPC Messsage
+            MessageInfo mi;
+            mi.SetInfoFromPacket(multicastBuf);
+            mi.SetIP(src_ip);
+            buf = mi.BuildIPCMessage(buf.mtype);
+
+            // add User
+            UserInfo ui;
+            ui = mi.BuildUserInfo();
+            userInfoVect.AddUser(ui);
             // std::cout << "[" << src_ip << "]" << std::endl;
             // std::cout << "[" << multicastBuf << "]" << std::endl;
             // std::cout << "[" << buf.mtext << "]" << str_len << std::endl;

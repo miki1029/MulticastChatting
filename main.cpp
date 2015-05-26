@@ -3,8 +3,10 @@
 #include "InputToMessageQueue.h"
 #include "MessageQueueToOutput.h"
 #include "MulticastToMessageQueue.h"
+#include "UserInfoVect.h"
 
 bool runState = true;
+UserInfoVect userInfoVect;
 
 void handler(int signum) {
     runState = false;
@@ -13,6 +15,10 @@ void handler(int signum) {
 int main(int argc, char** argv) {
     if(argc != 4) {
         std::cout << "Usage : " << argv[0] << " <GroupIP> <PORT> <User Name>\n" << std::endl;
+        return 1;
+    }
+    if(strchr(argv[3], '\t') != NULL) {
+        std::cout << "Don't use ':' in user name" << std::endl;
         return 1;
     }
 

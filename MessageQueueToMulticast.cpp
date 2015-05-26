@@ -3,6 +3,7 @@
 //
 
 #include "MessageQueueToMulticast.h"
+#include "MessageInfo.h"
 
 MessageQueueToMulticast::MessageQueueToMulticast(const char *ip, const char *port, const char *user) {
     // init Message Queue
@@ -30,13 +31,8 @@ MessageQueueToMulticast::MessageQueueToMulticast(const char *ip, const char *por
     mul_adr.sin_port = htons(atoi(port));
     setsockopt(send_sock, IPPROTO_IP, IP_MULTICAST_TTL, (void*)&time_live, sizeof(time_live));
 
-    // init userInfo
-    strcpy(userInfo, user);
-//    sprintf(userInfo, "%s", user);
-//    struct sockaddr_in localAddr;
-//    localAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-//    char* userIP = inet_ntoa(localAddr.sin_addr);
-//    std::cout << user << "(" << userIP << ") : " << std::endl;
+    // init username
+    strcpy(username, user);
 }
 
 MessageQueueToMulticast::~MessageQueueToMulticast() {
@@ -52,11 +48,14 @@ void MessageQueueToMulticast::StartThread() {
                 perror("msgrcv");
                 exit(1);
             }
-            // add User Info
-            sprintf(multicastBuf, "%s : %s", userInfo, buf.mtext);
+            // build packet for Multicast
+            MessageInfo mi;
+            mi.SetUsername(username);
+            mi.SetMessage(buf.mtext);
+            buf = mi.BuildPacket(buf.mtype);
             // send Multicast
-            sendto(send_sock, multicastBuf, strlen(multicastBuf), 0, (struct sockaddr*)&mul_adr, sizeof(mul_adr));
-            // std::cout << std::endl << "MQ(1)->Multicast : " << multicastBuf << std::endl;
+            sendto(send_sock, buf.mtext, strlen(buf.mtext), 0, (struct sockaddr*)&mul_adr, sizeof(mul_adr));
+            // std::cout << std::endl << "MQ(1)->Multicast : " << buf.mtext << std::endl;
         }
     });
 }
