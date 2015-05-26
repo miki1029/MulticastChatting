@@ -48,7 +48,7 @@ void InputToMessageQueue::StartThread() {
                 fts->StartThread();
                 continue;
             }
-            // if input 'ftrcv <ServerIP> <PORT>' then file transfer receive
+            // if input 'ftrcv <username> <PORT>' then file transfer receive
             else if(strncmp(buf.mtext, "ftrcv ", 6) == 0) {
                 ftc = new FileTransferClient(buf.mtext);
                 ftc->StartThread();

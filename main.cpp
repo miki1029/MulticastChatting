@@ -25,8 +25,6 @@ int main(int argc, char** argv) {
     InputToMessageQueue input;
     MessageQueueToMulticast toMulticast(argv[1], argv[2], argv[3]);
     MulticastToMessageQueue fromMulticast(argv[1], argv[2]);
-//    MessageQueueToMulticast toMulticast("224.1.1.2", "20000", argv[1]);
-//    MulticastToMessageQueue fromMulticast("224.1.1.2", "20000");
     MessageQueueToOutput output;
 
     input.StartThread();
@@ -34,18 +32,21 @@ int main(int argc, char** argv) {
     fromMulticast.StartThread();
     output.StartThread();
 
-    while(runState) {
+    signal(SIGINT, handler);
+
+    std::cout << std::endl << "Multicast Chatting Program" << std::endl
+              << "Enjoy Your Chat !!" << std::endl << std::endl;
+
+    while(runState) { // SIGINT(Ctrl+c) -> break
         sleep(1);
-        signal(SIGINT, handler);
     }
-//    userInfoVect.PrintUsers();
 
     input.StopThread();
     toMulticast.StopThread();
     fromMulticast.StopThread();
     output.StopThread();
 
-    std::cout << "Exit Chatting Program !" << std::endl;
+    std::cout << std::endl << "Exit Chatting Program !" << std::endl;
 
     return 0;
 }
