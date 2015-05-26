@@ -21,14 +21,18 @@
 //#include <netdb.h>
 //#include <net/if.h>
 #include <signal.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <errno.h>
 
 #define BUF_SIZE 200
-#define USR_SIZE 100
+#define USR_SIZE 80
+#define IP_SIZE 20
 #define TTL 64
 
 struct my_msgbuf {
     long mtype;
-    char mtext[BUF_SIZE];
+    char mtext[IP_SIZE+BUF_SIZE+USR_SIZE];
 };
 
 #endif //MESSAGEQUEUETOMUTLCAST_HEADER_H

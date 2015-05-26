@@ -53,18 +53,26 @@ MulticastToMessageQueue::~MulticastToMessageQueue() {
 void MulticastToMessageQueue::StartThread() {
     th = std::thread([=]() {
         while(true) {
+            struct sockaddr_in src_addr;
+            socklen_t src_addr_len = sizeof(src_addr);
+            char* src_ip;
             // read message from Multicast
-            str_len = recvfrom(recv_sock, buf.mtext, BUF_SIZE-1, 0, NULL, 0);
+            str_len = recvfrom(recv_sock, multicastBuf, USR_SIZE+BUF_SIZE-1, 0, (struct sockaddr*)&src_addr, &src_addr_len);
             if(str_len<0)
                 break;
-            buf.mtext[str_len]='\0';
+            multicastBuf[str_len]='\0';
+            src_ip = inet_ntoa(src_addr.sin_addr);
+            sprintf(buf.mtext, "(%s) %s", src_ip, multicastBuf);
+            // std::cout << "[" << src_ip << "]" << std::endl;
+            // std::cout << "[" << multicastBuf << "]" << std::endl;
+            // std::cout << "[" << buf.mtext << "]" << str_len << std::endl;
 
             // ditch newline at end, if it exists
             if(buf.mtext[str_len-1] == '\n') buf.mtext[str_len-1] = '\0';
 
             // std::cout << "Multicast->MQ(2) : " << buf.mtext << std::endl;
-            // write message to Message Queue (+1 for '\0')
-            if(msgsnd(msqid, &buf, str_len+1, 0) == -1)
+            // write message to Message Queue (+2 for buf.mtype, '\0')
+            if(msgsnd(msqid, &buf, strlen(buf.mtext) + 2, 0) == -1)
                 perror("msgsnd");
         }
     });

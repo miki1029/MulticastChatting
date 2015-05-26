@@ -12,7 +12,7 @@ void handler(int signum) {
 
 int main(int argc, char** argv) {
     if(argc != 4) {
-        std::cout << "Usage : " << argv[0] << " <GroupIP> <PORT> <UserName>\n" << std::endl;
+        std::cout << "Usage : " << argv[0] << " <GroupIP> <PORT> <User Name>\n" << std::endl;
         return 1;
     }
 

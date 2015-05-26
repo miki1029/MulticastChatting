@@ -21,6 +21,7 @@ private:
     int str_len;
     struct sockaddr_in adr;
     struct ip_mreq join_adr;
+    char multicastBuf[USR_SIZE+BUF_SIZE];
 
 public:
     MulticastToMessageQueue(const char *ip, const char *port);
